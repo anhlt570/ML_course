@@ -8,6 +8,7 @@ from keras.layers import Dense, Activation
 from keras.models import Sequential
 import letter_utils
 import os
+from sklearn.neural_network import MLPClassifier 
 
 def read_image(folder):
     imgData = []
@@ -33,6 +34,20 @@ def write_result(real,prediction):
         file.write(real_letter+','+predicted_letter+'\n')
     file.close()
 
+def model_by_MLP(Xtrain, Ytrain):
+    model = MLPClassifier()
+    model.fit(Xtrain,Ytrain)
+    return model
+
+def model_by_keras(Xtrain, Ytrain, Xtest, Ytest,num_pixels):
+    model = Sequential()
+    model.add(Dense(num_pixels, input_dim=num_pixels, kernel_initializer='normal', activation='relu'))
+    model.add(Dense(Ytest.shape[1], kernel_initializer='normal', activation='softmax'))
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.fit(x=Xtrain, y=Ytrain, validation_data=(Xtest, Ytest), epochs=10, batch_size=200)
+    
+    return model
+
 # init data
 # 0-a, 1-b, 2-c, 3-d, 4-e, 5-f, 6-g
 training_data = read_image('training_images/')
@@ -45,17 +60,8 @@ Ytest = to_categorical(verification_data[1])
 num_pixels = Xtrain.shape[1]*Xtrain.shape[2]
 Xtrain = Xtrain.reshape(Xtrain.shape[0], num_pixels).astype('float32')
 Xtest = Xtest.reshape(Xtest.shape[0], num_pixels).astype('float32')
-model = Sequential()
-model.add(Dense(num_pixels, input_dim=num_pixels,
-                kernel_initializer='normal', activation='relu'))
-model.add(Dense(Ytest.shape[1], kernel_initializer='normal', activation='softmax'))
-model.compile(loss='categorical_crossentropy',
-              optimizer='adam', metrics=['accuracy'])
-model.fit(x=Xtrain, y=Ytrain, validation_data=(Xtest, Ytest),
-          epochs=10, batch_size=200, verbose=2)
 
-scores = model.evaluate(x=Xtest, y=Ytest, verbose=1)
-print('score = ', scores)
+model = model_by_keras(Xtrain, Ytrain,Xtest, Ytest,num_pixels)
 prediction_result = [i for i in model.predict(Xtest)]
 print(prediction_result)
 for i in range(0, len(prediction_result)):
