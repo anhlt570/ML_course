@@ -1,2 +1,4 @@
 training_images
 verification_images
+output
+__pycache__
