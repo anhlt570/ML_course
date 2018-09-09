@@ -2,3 +2,6 @@ training_images
 verification_images
 output
 __pycache__
+models
+images
+.vscode

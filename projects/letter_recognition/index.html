@@ -5,6 +5,7 @@
 <input type="button" value="Clear" onclick="clearArea()" />
 <input type="button" value="Save" onclick="saveImage()" />
 <input type="button" value="Recognize" onclick="recognizeChar()" />
+<p id="recognize_result">The result here </p>
 <script>
     var canvas = document.getElementById('myCanvas');
     var mousePressed = false;
@@ -58,7 +59,20 @@
             }
         });
     }
+
     function recognizeChar() {
-        // TODO
+        var image_data = canvas.toDataURL();
+        data = JSON.stringify({ image_data: image_data });
+        $.ajax({
+            url: "http://localhost:5000/images/recognize",
+            contentType: "application/json",
+            crossDomain: true,
+            data: data,
+            method: "POST",
+            success: function (result) {
+                document.getElementById("recognize_result").innerText = result
+                clearArea();
+            }
+        });
     }
 </script>
