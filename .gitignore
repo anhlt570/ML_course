@@ -1,7 +1,7 @@
-training_images
-verification_images
-output
-__pycache__
-models
-images
+01_ML_Overview/training_images
+01_ML_Overview/verification_images
+01_ML_Overview/output
+01_ML_Overview/__pycache__
+01_ML_Overview/models
+01_ML_Overview/images
 .vscode
